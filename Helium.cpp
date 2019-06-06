@@ -94,7 +94,10 @@ std::vector<double> Helium::electrostatic()
     std::vector<double> U(m_u.size(), 0.0);
     U[1] = m_h + (7*m_f[0] + 6*m_f[1] - m_f[2]) / 2;
 
-    for (size_t n = 2; n < m_u.size(); ++n) U[n] = 2*U[n-1] - U[n-2] + m_f[n] + 10*m_f[n-1] + m_f[n-2];
+    for (size_t n = 2; n < U.size(); ++n) U[n] = 2*U[n-1] - U[n-2] + m_f[n] + 10*m_f[n-1] + m_f[n-2];
+
+    double k = (1 - U.back()) / U.size();
+    for (size_t r = 0; r < U.size(); ++r) U[r] += k*(r + 1);
 
     return U;
 }

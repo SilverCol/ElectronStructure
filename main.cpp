@@ -25,7 +25,7 @@ int main()
     Helium atom(init, R);
 
     std::vector<double> data = atom.electrostatic();
-    writeBinary(data, ".o /data/potential.bin");
+    writeBinary(data, "../data/potential.bin");
     std::cout << atom.energy() << std::endl;
     std::cout << atom.norm() << std::endl;
     return 0;
