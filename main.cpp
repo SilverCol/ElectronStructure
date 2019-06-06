@@ -9,10 +9,7 @@ static const double h = R/N;
 void writeBinary(std::vector<double>& data, const std::string& file)
 {
     std::ofstream output(file, std::ios::binary);
-    for (double& x : data)
-    {
-        output.write(reinterpret_cast<char*>(&x), sizeof(x));
-    }
+    for (double& x : data) output.write(reinterpret_cast<char*>(&x), sizeof(x));
     output.close();
 }
 
@@ -24,8 +21,6 @@ int main()
 
     Helium atom(init, R);
 
-    std::vector<double> data = atom.electrostatic();
-    writeBinary(data, "../data/potential.bin");
     std::cout << atom.energy() << std::endl;
     std::cout << atom.norm() << std::endl;
     return 0;

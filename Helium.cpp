@@ -2,14 +2,14 @@
 // Created by mitja on 4.6.2019.
 //
 
-#include <algorithm>
 #include <iostream>
 #include "Helium.h"
 
 
 namespace
 {
-    const double epsilon = 1e-4;
+    const double epsilon = 1e-2;
+    const double factor = 3.141592653589793/6;
 }
 
 Helium::Helium(const std::vector<double>& u, double R) :
@@ -17,10 +17,11 @@ m_u(u),
 m_V(u.size()),
 m_f(u.size()),
 m_h(R/u.size()),
-m_E(0.0)
+m_E(-.5)
 {
     // for (size_t r = 0; r < m_V.size(); ++r) m_V[r] = - 1/((r + 1)*m_h);
     // updateDensity();
+    LDA_DFT();
 }
 
 void Helium::shoot(double E)
@@ -35,9 +36,9 @@ void Helium::shoot(double E)
 
 void Helium::updateDensity()
 {
-    double E1 = -0.55;
+    double E1 = m_E - .5;
     double u1 = 1.0;
-    double E2 = -0.45;
+    double E2 = m_E + .5;
     double u2 = 1.0;
 
     while(u1*u2 > 0)
@@ -100,4 +101,18 @@ std::vector<double> Helium::electrostatic()
     for (size_t r = 0; r < U.size(); ++r) U[r] += k*(r + 1);
 
     return U;
+}
+
+void Helium::LDA_DFT()
+{
+    while(true)
+    {
+        std::vector<double> comparison(m_u);
+        std::vector<double> U = electrostatic();
+        for (size_t n = 0; n < m_V.size(); ++n)
+            m_V[n] = 2 * (U[n] - 1) / ((n + 1) * m_h)
+                     - std::pow(m_u[n] * m_u[n] / (factor * (n+1) * (n+1) * m_h * m_h), 1 / 3);
+        updateDensity();
+        if (::norm(m_u - comparison, m_h) < epsilon) return;
+    }
 }

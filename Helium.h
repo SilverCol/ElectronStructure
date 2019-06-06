@@ -7,11 +7,19 @@
 
 #include <vector>
 #include <cmath>
+#include <algorithm>
 #include <numeric>
 
 inline void operator/=(std::vector<double>& v, double a)
 {
     for (double& x : v) x /= a;
+}
+
+inline std::vector<double> operator-(const std::vector<double>& v1, const std::vector<double>& v2)
+{
+    std::vector<double> w(v1.size());
+    std::transform(v1.begin(), v1.end(), v2.begin(), w.begin(), std::minus<>());
+    return w;
 }
 
 inline double norm(const std::vector<double>& v, double h = 1){
@@ -29,6 +37,7 @@ public:
 private:
     void shoot(double E);
     void updateDensity();
+    void LDA_DFT();
 
     std::vector<double> m_u;
     std::vector<double> m_V;
