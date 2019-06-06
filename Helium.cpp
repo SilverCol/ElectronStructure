@@ -89,7 +89,7 @@ void Helium::updateDensity()
 
 std::vector<double> Helium::electrostatic()
 {
-    for (size_t r = 0; r < m_u.size(); ++r) m_f[r] = - m_h*m_u[r] / (12*(r+1));
+    for (size_t r = 0; r < m_u.size(); ++r) m_f[r] = - m_h*m_u[r]*m_u[r] / (12*(r+1));
 
     std::vector<double> U(m_u.size(), 0.0);
     U[1] = m_h + (7*m_f[0] + 6*m_f[1] - m_f[2]) / 2;
