@@ -19,8 +19,8 @@ m_f(u.size()),
 m_h(R/u.size()),
 m_E(0.0)
 {
-    for (size_t r = 0; r < m_V.size(); ++r) m_V[r] = - 1/((r + 1)*m_h);
-    updateDensity();
+    // for (size_t r = 0; r < m_V.size(); ++r) m_V[r] = - 1/((r + 1)*m_h);
+    // updateDensity();
 }
 
 void Helium::shoot(double E)
@@ -85,4 +85,16 @@ void Helium::updateDensity()
             u2 = m_u.back();
         }
     }
+}
+
+std::vector<double> Helium::electrostatic()
+{
+    for (size_t r = 0; r < m_u.size(); ++r) m_f[r] = - m_h*m_u[r] / (12*(r+1));
+
+    std::vector<double> U(m_u.size(), 0.0);
+    U[1] = m_h + (7*m_f[0] + 6*m_f[1] - m_f[2]) / 2;
+
+    for (size_t n = 2; n < m_u.size(); ++n) U[n] = 2*U[n-1] - U[n-2] + m_f[n] + 10*m_f[n-1] + m_f[n-2];
+
+    return U;
 }

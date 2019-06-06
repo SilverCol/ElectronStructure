@@ -24,11 +24,11 @@ public:
     Helium(const std::vector<double>& u, double R);
     inline double energy() const {return m_E;}
     inline double norm() const {return ::norm(m_u, m_h);}
+    std::vector<double> electrostatic();
 
 private:
     void shoot(double E);
     void updateDensity();
-    std::vector<double> electrostatic();
 
     std::vector<double> m_u;
     std::vector<double> m_V;
