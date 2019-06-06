@@ -5,12 +5,13 @@
 #include <algorithm>
 #include <cmath>
 #include <numeric>
+#include <iostream>
 #include "Helium.h"
 
 
 namespace
 {
-    static const double epsilon = 1e-10;
+    const double epsilon = 1e-4;
 
     double norm(const std::vector<double>& v)
     {
@@ -46,29 +47,26 @@ void Helium::shoot(double E)
 
 void Helium::updateDensity()
 {
-    double E1 = 0.0;
-    shoot(E1);
-    double u1 = m_u.back();
-    if (std::abs(u1/m_u.front()) < epsilon)
-    {
-        m_E = E1;
-        m_u /= norm(m_u);
-        return;
-    }
-
-    double E2 = .667868758;
-    shoot(E2);
-    double u2 = m_u.back();
-    if (std::abs(u2/m_u.front()) < epsilon)
-    {
-        m_E = E2;
-        m_u /= norm(m_u);
-        return;
-    }
+    double E1 = -0.75 / 2;
+    double u1 = 1.0;
+    double E2 = -0.25 / 2;
+    double u2 = 1.0;
 
     while(u1*u2 > 0)
     {
-        E2 *= 2;
+        double delta = (E2 - E1) / 2;
+
+        E1 -= delta;
+        shoot(E1);
+        u1 = m_u.back();
+        if (std::abs(u1/m_u.front()) < epsilon)
+        {
+            m_E = E1;
+            m_u /= norm(m_u);
+            return;
+        }
+
+        E2 += delta;
         shoot(E2);
         u2 = m_u.back();
         if (std::abs(u2/m_u.front()) < epsilon)
@@ -94,6 +92,9 @@ void Helium::updateDensity()
             u1 = m_u.back();
             E1 = En;
         }
-        else E2 = En;
+        else{
+            E2 = En;
+            u2 = m_u.back();
+        }
     }
 }

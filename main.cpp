@@ -1,8 +1,8 @@
 #include <iostream>
 #include "Helium.h"
 
-static const double R = 100;
-static const size_t N = 10000;
+static const double R = 10;
+static const size_t N = 100000;
 
 int main()
 {
