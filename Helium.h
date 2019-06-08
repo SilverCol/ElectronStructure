@@ -42,6 +42,7 @@ public:
 private:
     inline void constructSpace(){ for (size_t n = 0; n < m_N; ++n) m_r[n] = (n + 1) * m_h; }
     void costructVarBasis();
+    void costructHamiltonian();
     void updateDensity();
     void LDA_DFT();
 
@@ -49,6 +50,7 @@ private:
     gsl_matrix* m_eigenVec;
     gsl_vector* m_eigenVal;
     gsl_eigen_symmv_workspace* m_eigenWorkspace;
+    gsl_vector* m_eigenColumn;
 
     std::vector<std::vector<double> > m_basis;
     std::vector<double> m_u;

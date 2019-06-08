@@ -30,6 +30,7 @@ m_N(u.size())
     m_eigenVec = gsl_matrix_alloc(M, M);
     m_eigenVal = gsl_vector_alloc(M);
     m_eigenWorkspace = gsl_eigen_symmv_alloc(M);
+    m_eigenColumn = gsl_vector_alloc(M);
     // for (size_t r = 0; r < m_V.size(); ++r) m_V[r] = - 1/((r + 1)*m_h);
     // updateDensity();
     //LDA_DFT();
@@ -41,6 +42,7 @@ Helium::~Helium()
     gsl_matrix_free(m_H);
     gsl_matrix_free(m_eigenVec);
     gsl_vector_free(m_eigenVal);
+    gsl_vector_free(m_eigenColumn);
 }
 
 void Helium::costructVarBasis()
@@ -51,6 +53,38 @@ void Helium::costructVarBasis()
         {
             m_basis[n][r] = std::sqrt(4/std::pow(n, 5)) * std::exp(-m_r[r] / n) * gsl_sf_laguerre_n(n, 1.0, 2*m_r[r]/n);
         }
+    }
+}
+
+void Helium::costructHamiltonian()
+{
+    for (size_t j = 0; j < M; ++j)
+    {
+        for (size_t k = 0; k < M; ++k)
+        {
+            double* element = gsl_matrix_ptr(m_H, j, k);
+
+            for (size_t r = 0; r < m_N; ++r)
+            {
+                *element += m_basis[j][r] * m_r[r] * m_basis[k][r];
+            }
+            *element *= m_h;
+
+            if (j == k) *element -= 1/(2 * j*j);
+        }
+    }
+}
+
+void Helium::updateDensity()
+{
+    gsl_eigen_symmv(m_H, m_eigenVal, m_eigenVec, m_eigenWorkspace);
+    gsl_eigen_symmv_sort(m_eigenVal, m_eigenVec, GSL_EIGEN_SORT_VAL_ASC);
+
+    gsl_matrix_get_col(m_eigenColumn, m_eigenVec, 0);
+    std::transform(m_u.begin(), m_u.end(), m_u.begin(), [](double u){return 0.0;});
+    for (size_t n = 0; n < M; ++n)
+    {
+        // TODO do this with transform no.2
     }
 }
 
