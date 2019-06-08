@@ -41,8 +41,8 @@ public:
 
 private:
     inline void constructSpace(){ for (size_t n = 0; n < m_N; ++n) m_r[n] = (n + 1) * m_h; }
-    void costructVarBasis();
-    void costructHamiltonian();
+    void constructVarBasis();
+    void constructHamiltonian();
     void updateDensity();
     void LDA_DFT();
 

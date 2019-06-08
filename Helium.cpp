@@ -17,7 +17,7 @@ namespace
 }
 
 Helium::Helium(const std::vector<double>& u, double R) :
-m_basis(M),
+m_basis(M, std::vector<double>(u.size())),
 m_u(u),
 m_r(u.size()),
 m_V(u.size()),
@@ -31,8 +31,9 @@ m_N(u.size())
     m_eigenVal = gsl_vector_alloc(M);
     m_eigenWorkspace = gsl_eigen_symmv_alloc(M);
     m_eigenColumn = gsl_vector_alloc(M);
-    // for (size_t r = 0; r < m_V.size(); ++r) m_V[r] = - 1/((r + 1)*m_h);
-    // updateDensity();
+    constructSpace();
+    constructVarBasis();
+    updateDensity();
     //LDA_DFT();
 }
 
@@ -45,7 +46,7 @@ Helium::~Helium()
     gsl_vector_free(m_eigenColumn);
 }
 
-void Helium::costructVarBasis()
+void Helium::constructVarBasis()
 {
     for (size_t n = 1; n < M + 1; ++n)
     {
@@ -56,7 +57,7 @@ void Helium::costructVarBasis()
     }
 }
 
-void Helium::costructHamiltonian()
+void Helium::constructHamiltonian()
 {
     for (size_t j = 0; j < M; ++j)
     {
@@ -77,6 +78,8 @@ void Helium::costructHamiltonian()
 
 void Helium::updateDensity()
 {
+    constructHamiltonian();
+    
     gsl_eigen_symmv(m_H, m_eigenVal, m_eigenVec, m_eigenWorkspace);
     gsl_eigen_symmv_sort(m_eigenVal, m_eigenVec, GSL_EIGEN_SORT_VAL_ASC);
 
@@ -84,8 +87,14 @@ void Helium::updateDensity()
     std::transform(m_u.begin(), m_u.end(), m_u.begin(), [](double u){return 0.0;});
     for (size_t n = 0; n < M; ++n)
     {
-        // TODO do this with transform no.2
+        std::transform(m_u.begin(), m_u.end(), m_basis.begin(), m_u.begin(),
+                [this, n](double u, std::vector<double>& b)
+                {
+                    return u + gsl_vector_get(m_eigenColumn, n) * b[n];
+                });
     }
+
+    m_E = gsl_vector_get(m_eigenVal, 0);
 }
 
 std::vector<double> Helium::electrostatic()
