@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 data = np.fromfile('potential.bin')
-R = 10
+R = 1000
 domain = np.linspace(R/len(data), R + R/len(data), len(data))
 v = lambda x : -(x + 1) * np.exp(-2*x) + 1
 

@@ -26,8 +26,20 @@ inline std::vector<double> operator-(const std::vector<double>& v1, const std::v
     return w;
 }
 
-inline double norm(const std::vector<double>& v, double h = 1){
-    return std::sqrt(h * std::inner_product(v.begin(), v.end(), v.begin(), 0.0));
+inline double inner(const std::vector<double>& v1, const std::vector<double>& v2, const std::vector<double>& domain,
+        double h)
+{
+    double inner = 0.0;
+    for (size_t n = 0; n < v1.size(); ++n)
+    {
+        inner += v1[n] * v2[n] * std::pow(domain[n], 2);
+    }
+    return inner * h;
+}
+
+inline double norm(const std::vector<double>& v, const std::vector<double>& domain, double h)
+{
+    return std::sqrt(inner(v, v, domain, h));
 }
 
 class Helium
@@ -35,9 +47,11 @@ class Helium
 public:
     Helium(const std::vector<double>& u, double R);
     ~Helium();
-    inline double energy() const {return m_E;}
-    inline double norm() const {return ::norm(m_u, m_h);}
+    inline double epsilon() const {return m_e;}
+    inline double norm() const {return ::norm(m_psi, m_r, m_h);}
+    inline std::vector<double>& psi() {return m_psi;}
     std::vector<double> electrostatic();
+    double energy();
 
 private:
     inline void constructSpace(){ for (size_t n = 0; n < m_N; ++n) m_r[n] = (n + 1) * m_h; }
@@ -53,13 +67,13 @@ private:
     gsl_vector* m_eigenColumn;
 
     std::vector<std::vector<double> > m_basis;
-    std::vector<double> m_u;
+    std::vector<double> m_psi;
     std::vector<double> m_r;
     std::vector<double> m_V;
     std::vector<double> m_f;
 
     double m_h;
-    double m_E;
+    double m_e;
     size_t m_N;
 
 };
