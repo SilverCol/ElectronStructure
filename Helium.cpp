@@ -139,6 +139,23 @@ std::vector<double> Helium::electrostatic()
     return U;
 }
 
+std::vector<double> Helium::correlatic()
+{
+    std::transform(m_psi.begin(), m_psi.end(), m_f.begin(), [](double psi)
+    {
+        return std::pow(std::abs(psi), 2.0/3.0);
+    });
+
+    std::vector<double> v(m_N);
+    std::transform(m_f.begin(), m_f.end(), v.begin(), [](double psi)
+    {
+        // return -F * psi - A * std::log(1 + B * psi);
+        return C * psi;
+    });
+
+    return v;
+}
+
 void Helium::LDA_DFT()
 {
     std::cout << "Running LDA DFT." << std::endl;
@@ -148,16 +165,11 @@ void Helium::LDA_DFT()
 
         std::vector<double> comparison(m_psi);
         std::vector<double> U = electrostatic();
+        std::vector<double> V = correlatic();
 
-        std::transform(m_psi.begin(), m_psi.end(), m_f.begin(),
-                [](double psi)
-                {
-                    return std::pow(std::abs(psi), 2.0/3.0);
-                });
         for (size_t n = 0; n < m_N; ++n)
         {
-            m_V[n] = (2*U[n] - 1) / m_r[n] - C * m_f[n];
-            // m_V[n] = (2*U[n] - 1) / m_r[n] - F * m_f[n] - A * std::log(1 + B * m_f[n]);
+            m_V[n] = (2*U[n] - 1) / m_r[n] - V[n];
         }
 
         updateDensity();
@@ -168,17 +180,13 @@ void Helium::LDA_DFT()
 double Helium::energy()
 {
     std::vector<double> U = electrostatic();
-    std::transform(m_psi.begin(), m_psi.end(), m_f.begin(),
-                   [](double psi)
-                   {
-                       return std::pow(std::abs(psi), 2.0/3.0);
-                   });
+    std::vector<double> V = correlatic();
 
     double energy = 0.0;
     for (size_t n = 0; n < m_N; ++n)
     {
         energy -= 2 * U[n] * std::pow(m_psi[n], 2) * m_r[n];
-        energy += C * m_f[n] * std::pow(m_psi[n] * m_r[n], 2) / 2;
+        energy += V[n] * std::pow(m_psi[n] * m_r[n], 2) / 2;
     }
     energy *= m_h;
     return 2*m_e + energy;

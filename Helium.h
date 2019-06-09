@@ -58,6 +58,7 @@ private:
     void constructVarBasis();
     void constructHamiltonian();
     void updateDensity();
+    std::vector<double> correlatic();
     void LDA_DFT();
 
     gsl_matrix* m_H;
