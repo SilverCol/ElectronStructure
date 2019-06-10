@@ -1,8 +1,8 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
-data = np.fromfile('state.bin')
-R = 1000
+R = 15
+data = np.fromfile('state' + str(R) + '.bin')
 domain = np.linspace(R/len(data), R + R/len(data), len(data))
 
 plt.rcParams.update({'font.size': 15})

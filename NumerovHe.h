@@ -13,6 +13,7 @@ public:
     NumerovHe(const std::vector<double>& u, double R);
 private:
     void shoot(double e);
+    bool nodeless();
     void updateDensity() override;
 
 };

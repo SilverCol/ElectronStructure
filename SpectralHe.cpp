@@ -9,6 +9,7 @@
 namespace
 {
     const size_t M = 10;
+    const double tolerance = 1e-10;
 }
 
 SpectralHe::SpectralHe(const std::vector<double>& u, double R) :
@@ -97,4 +98,25 @@ void SpectralHe::updateDensity()
     }
 
     m_e = gsl_vector_get(m_eigenVal, 0);
+}
+
+void SpectralHe::LDA_DFT()
+{
+    std::cout << "Running LDA DFT." << std::endl;
+    while(true)
+    {
+        std::cout << "Now at " << m_e << '\r' << std::flush;
+
+        std::vector<double> comparison(m_u);
+        std::vector<double> U = electrostatic();
+        std::vector<double> V = correlatic();
+
+        for (size_t n = 0; n < m_N; ++n)
+        {
+            m_V[n] = (2*U[n] - 1) / m_r[n] + V[n];
+        }
+
+        updateDensity();
+        if (::norm(m_u - comparison, m_h) < tolerance) return;
+    }
 }

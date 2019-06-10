@@ -7,10 +7,10 @@
 
 namespace
 {
-    const double tolerance = 1e-10;
-    const double C1 = .0545;
+    const double tolerance = 1e-4;
+    const double C1 = .0;
     const double C2 = 11.4 * std::pow(8 * 3.141592653589793 / 3, 1.0/3.0);
-    const double C = std::pow(6 / 3.141592653589793, 1.0/3.0);
+    const double C = std::pow(3 / (2 * std::pow(3.141592653589793, 2)), 1.0/3.0);
 }
 
 Helium::Helium(const std::vector<double>& u, double R):
@@ -73,17 +73,18 @@ void Helium::LDA_DFT()
     {
         std::cout << "Now at " << m_e << '\r' << std::flush;
 
-        std::vector<double> comparison(m_u);
+        //std::vector<double> comparison(m_u);
+        double comparison = m_e;
         std::vector<double> U = electrostatic();
         std::vector<double> V = correlatic();
 
         for (size_t n = 0; n < m_N; ++n)
         {
-            m_V[n] = (2*U[n] - 1) / m_r[n] + V[n];
+            m_V[n] = (2*U[n] - 2) / m_r[n] + V[n];
         }
 
         updateDensity();
-        if (::norm(m_u - comparison, m_h) < tolerance) return;
+        if (std::abs(m_e - comparison) < tolerance) return;
     }
 }
 

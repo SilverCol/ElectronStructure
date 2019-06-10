@@ -21,6 +21,7 @@ private:
     void constructVarBasis();
     void constructHamiltonian();
     void updateDensity() override;
+    void LDA_DFT() override;
 
     gsl_matrix* m_H;
     gsl_matrix* m_eigenVec;

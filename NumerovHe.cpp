@@ -6,7 +6,7 @@
 
 namespace
 {
-    const double tolerance = 1e-4;
+    const double tolerance = 1e-12;
 }
 
 NumerovHe::NumerovHe(const std::vector<double>& u, double R) :
@@ -30,56 +30,33 @@ void NumerovHe::shoot(double e)
     }
 }
 
+bool NumerovHe::nodeless()
+{
+    return std::find_if(m_u.begin() + 1, m_u.end(),
+                [](double u){return u < 0;}) == m_u.end();
+}
+
 void NumerovHe::updateDensity()
 {
-    double E1 = -.55;
-    double u1 = 1.0;
-    double E2 = -.45;
-    double u2 = 1.0;
-
-    while(u1*u2 > 0)
-    {
-        double delta = (E2 - E1) / 2;
-
-        E1 -= delta;
-        shoot(E1);
-        u1 = m_u.back();
-        if (std::abs(u1/m_u.front()) < tolerance)
-        {
-            m_e = E1;
-            m_u /= norm();
-            return;
-        }
-
-        E2 += delta;
-        shoot(E2);
-        u2 = m_u.back();
-        if (std::abs(u2/m_u.front()) < tolerance)
-        {
-            m_e = E2;
-            m_u /= norm();
-            return;
-        }
-    }
+    double E1 = -1.0;
+    double E2 = 0.0;
 
     while(true)
     {
         double En = (E1 + E2)/2;
         shoot(En);
-        if (std::abs((E2 - E1) / En) < tolerance)
+        if (std::abs((E2 - E1)) < tolerance)
         {
             m_e = En;
             m_u /= norm();
             return;
         }
-        else if (u1*m_u.back() > 0)
+        else if (nodeless())
         {
-            u1 = m_u.back();
             E1 = En;
         }
         else{
             E2 = En;
-            u2 = m_u.back();
         }
     }
 }

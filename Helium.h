@@ -47,7 +47,7 @@ protected:
     virtual void updateDensity() = 0;
     inline void constructSpace(){ for (size_t n = 0; n < m_N; ++n) m_r[n] = (n + 1) * m_h; }
     std::vector<double> correlatic();
-    void LDA_DFT();
+    virtual void LDA_DFT();
 
     std::vector<double> m_u;
     std::vector<double> m_r;

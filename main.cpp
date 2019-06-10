@@ -4,8 +4,8 @@
 #include "SpectralHe.h"
 #include "NumerovHe.h"
 
-static const double R = 20;
-static const size_t N = 1000000;
+static const double R = 15;
+static const size_t N = 10000000;
 static const double h = R/N;
 
 void writeBinary(std::vector<double>& data, const std::string& file)
@@ -35,7 +35,10 @@ int main()
     // std::vector<double> pot = atom.electrostatic();
     // writeBinary(pot, "../data/potential.bin");
     std::vector<double> psi = atom.psi();
-    writeBinary(psi, "../data/state.bin");
+    std::string state = "../data/state";
+    state.append(std::to_string((int)R));
+    state.append(".bin");
+    writeBinary(psi, state);
 
     std::cout << "Results: " << std::endl;
     std::cout << atom.epsilon() << std::endl;
