@@ -10,15 +10,14 @@ namespace
 {
     const size_t M = 10;
     const double tolerance = 1e-10;
-    const double F = std::pow(3 / 3.141592653589793, 1.0/3.0);
-    const double A = .0545 * std::pow(3 / (2 * 3.141592653589793), 2.0/3.0);
-    const double B = 11.4 * std::pow(4 * 3.141592653589793 / 3, 1.0/3.0);
-    const double C = std::pow(3 / (2 * std::pow(3.141592653589793, 2)), 1.0/3.0);
+    const double C1 = .0545;
+    const double C2 = 11.4 * std::pow(8 * 3.141592653589793 / 3, 1.0/3.0);
+    const double C = std::pow(6 / 3.141592653589793, 1.0/3.0);
 }
 
 Helium::Helium(const std::vector<double>& u, double R) :
 m_basis(M, std::vector<double>(u.size())),
-m_psi(u),
+m_u(u),
 m_r(u.size()),
 m_V(u.size()),
 m_f(u.size()),
@@ -37,7 +36,7 @@ m_N(u.size())
     // {
     //     for (auto& b2 : m_basis)
     //     {
-    //         std::cout << ::inner(b1, b2, m_r, m_h) << std::endl;
+    //         std::cout << ::inner(b1, b2, m_h) << std::endl;
     //     }
     // }
     // updateDensity();
@@ -61,10 +60,10 @@ void Helium::constructVarBasis()
         std::cout << n << '/' << M << '\r' << std::flush;
         for (size_t r = 0; r < m_N; ++r)
         {
-            m_basis[n - 1][r] = std::sqrt(4/std::pow(n, 5)) * std::exp(-m_r[r] / n)
+            m_basis[n - 1][r] = m_r[r] * std::exp(-m_r[r] / n)
                     * gsl_sf_laguerre_n(n - 1, 1.0, 2*m_r[r]/n);
         }
-        m_basis[n - 1] /= ::norm(m_basis[n - 1], m_r, m_h);
+        m_basis[n - 1] /= ::norm(m_basis[n - 1], m_h);
     }
     std::cout << std::endl;
 }
@@ -80,11 +79,12 @@ void Helium::constructHamiltonian()
 
             for (size_t r = 0; r < m_N; ++r)
             {
-                *element += m_basis[j][r] * m_V[r] * m_basis[k][r] * std::pow(m_r[r], 2);
+                *element += m_basis[j][r] * m_V[r] * m_basis[k][r];
             }
             *element *= m_h;
 
-            if (j == k) *element -= 1/(2 * std::pow(j + 1, 2));
+            size_t n = j + 1;
+            if (j == k) *element -= 1/(2 * std::pow(n, 2));
         }
     }
 }
@@ -97,13 +97,13 @@ void Helium::updateDensity()
     gsl_eigen_symmv_sort(m_eigenVal, m_eigenVec, GSL_EIGEN_SORT_VAL_ASC);
 
     gsl_matrix_get_col(m_eigenColumn, m_eigenVec, 0);
-    std::transform(m_psi.begin(), m_psi.end(), m_psi.begin(), [](double u){return 0.0;});
+    std::transform(m_u.begin(), m_u.end(), m_u.begin(), [](double u){return 0.0;});
     for (size_t n = 0; n < M; ++n)
     {
-        std::transform(m_psi.begin(), m_psi.end(), m_basis[n].begin(), m_psi.begin(),
-                [this, n](double psi, double b)
+        std::transform(m_u.begin(), m_u.end(), m_basis[n].begin(), m_u.begin(),
+                [this, n](double u, double b)
                 {
-                    return psi + gsl_vector_get(m_eigenColumn, n) * b;
+                    return u + gsl_vector_get(m_eigenColumn, n) * b;
                 });
     }
 
@@ -117,23 +117,23 @@ std::vector<double> Helium::electrostatic()
         throw std::runtime_error("State not normalized.");
     }
 
-    for (size_t r = 0; r < m_N; ++r)
+    for (size_t n = 0; n < m_N; ++n)
     {
-        m_f[r] = - m_r[r] * std::pow(m_h*m_psi[r], 2) / 12;
+        m_f[n] = - std::pow(m_h*m_u[n], 2) / (12 * m_r[n]);
     }
 
-    std::vector<double> U(m_psi.size(), 0.0);
+    std::vector<double> U(m_N, 0.0);
     U[1] = m_h + (7*m_f[0] + 6*m_f[1] - m_f[2]) / 2;
 
-    for (size_t n = 2; n < U.size(); ++n)
+    for (size_t n = 2; n < m_N; ++n)
     {
         U[n] = 2*U[n-1] - U[n-2] + m_f[n] + 10*m_f[n-1] + m_f[n-2];
     }
 
-    double k = (1 - U.back()) / U.size();
-    for (size_t r = 0; r < U.size(); ++r)
+    double k = (1 - U.back()) / m_r.back();
+    for (size_t r = 0; r < m_N; ++r)
     {
-        U[r] += k*(r + 1);
+        U[r] += k * m_r[r];
     }
 
     return U;
@@ -141,16 +141,11 @@ std::vector<double> Helium::electrostatic()
 
 std::vector<double> Helium::correlatic()
 {
-    std::transform(m_psi.begin(), m_psi.end(), m_f.begin(), [](double psi)
-    {
-        return std::pow(std::abs(psi), 2.0/3.0);
-    });
-
     std::vector<double> v(m_N);
-    std::transform(m_f.begin(), m_f.end(), v.begin(), [](double psi)
+    std::transform(m_u.begin(), m_u.end(), m_r.begin(), v.begin(), [](double u, double r)
     {
-        // return -F * psi - A * std::log(1 + B * psi);
-        return C * psi;
+        return - C * std::pow(std::abs(u / r), 2.0/3.0)
+                + C1 * std::log(1 + C2 * std::pow(std::abs(u / r), 2.0/3.0));
     });
 
     return v;
@@ -163,17 +158,17 @@ void Helium::LDA_DFT()
     {
         std::cout << "Now at " << m_e << '\r' << std::flush;
 
-        std::vector<double> comparison(m_psi);
+        std::vector<double> comparison(m_u);
         std::vector<double> U = electrostatic();
         std::vector<double> V = correlatic();
 
         for (size_t n = 0; n < m_N; ++n)
         {
-            m_V[n] = (2*U[n] - 1) / m_r[n] - V[n];
+            m_V[n] = (2*U[n] - 1) / m_r[n] + V[n];
         }
 
         updateDensity();
-        if (::norm(m_psi - comparison, m_r, m_h) < tolerance) return;
+        if (::norm(m_u - comparison, m_h) < tolerance) return;
     }
 }
 
@@ -185,9 +180,16 @@ double Helium::energy()
     double energy = 0.0;
     for (size_t n = 0; n < m_N; ++n)
     {
-        energy -= 2 * U[n] * std::pow(m_psi[n], 2) * m_r[n];
-        energy += V[n] * std::pow(m_psi[n] * m_r[n], 2) / 2;
+        energy -= 2 * U[n] * std::pow(m_u[n], 2) / m_r[n];
+        energy -= V[n] * std::pow(m_u[n], 2) / 2;
     }
     energy *= m_h;
     return 2*m_e + energy;
+}
+
+std::vector<double> Helium::psi()
+{
+    std::vector<double> psi(m_N);
+    std::transform(m_u.begin(), m_u.end(), m_r.begin(), psi.begin(), std::multiplies<>());
+    return psi;
 }

@@ -19,19 +19,22 @@ void writeBinary(std::vector<double>& data, const std::string& file)
 
 int main()
 {
-    std::vector<double> init(N);
     std::vector<double> domain(N);
     for (size_t r = 0; r < N; ++r) domain[r] = h*(r + 1);
+
+    std::vector<double> init(N);
     for (size_t r = 0; r < init.size(); ++r)
     {
-        init[r] = std::exp(-domain[r]);
+        init[r] = domain[r] * std::exp(-domain[r]);
     }
-    init /= norm(init, domain, h);
+    init /= norm(init, h);
 
     Helium atom(init, R);
 
     // std::vector<double> pot = atom.electrostatic();
-    writeBinary(atom.psi(), "../data/state.bin");
+    // writeBinary(pot, "../data/potential.bin");
+    std::vector<double> psi = atom.psi();
+    writeBinary(psi, "../data/state.bin");
 
     std::cout << "Results: " << std::endl;
     std::cout << atom.epsilon() << std::endl;
