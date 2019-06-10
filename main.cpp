@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <gsl/gsl_sf_laguerre.h>
-#include "Helium.h"
+#include "SpectralH.h"
 
 static const double R = 1000;
 static const size_t N = 1000000;
@@ -29,7 +29,7 @@ int main()
     }
     init /= norm(init, h);
 
-    Helium atom(init, R);
+    SpectralH atom(init, R);
 
     // std::vector<double> pot = atom.electrostatic();
     // writeBinary(pot, "../data/potential.bin");
