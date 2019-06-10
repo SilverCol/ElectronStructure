@@ -2,8 +2,8 @@
 // Created by mitja on 4.6.2019.
 //
 
-#ifndef VAJA_VI_1_SPECTRALH_H
-#define VAJA_VI_1_SPECTRALH_H
+#ifndef VAJA_VI_1_SPECTRALHE_H
+#define VAJA_VI_1_SPECTRALHE_H
 
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_vector.h>
@@ -11,11 +11,11 @@
 #include <gsl/gsl_eigen.h>
 #include "Helium.h"
 
-class SpectralH: public Helium
+class SpectralHe: public Helium
 {
 public:
-    SpectralH(const std::vector<double>& u, double R);
-    ~SpectralH();
+    SpectralHe(const std::vector<double>& u, double R);
+    ~SpectralHe();
 
 private:
     void constructVarBasis();
@@ -32,4 +32,4 @@ private:
 };
 
 
-#endif //VAJA_VI_1_SPECTRALH_H
+#endif //VAJA_VI_1_SPECTRALHE_H

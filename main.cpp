@@ -1,9 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <gsl/gsl_sf_laguerre.h>
-#include "SpectralH.h"
+#include "SpectralHe.h"
+#include "NumerovHe.h"
 
-static const double R = 1000;
+static const double R = 20;
 static const size_t N = 1000000;
 static const double h = R/N;
 
@@ -29,7 +30,7 @@ int main()
     }
     init /= norm(init, h);
 
-    SpectralH atom(init, R);
+    NumerovHe atom(init, R);
 
     // std::vector<double> pot = atom.electrostatic();
     // writeBinary(pot, "../data/potential.bin");

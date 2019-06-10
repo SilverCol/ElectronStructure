@@ -4,14 +4,14 @@
 
 #include <iostream>
 #include <gsl/gsl_sf_laguerre.h>
-#include "SpectralH.h"
+#include "SpectralHe.h"
 
 namespace
 {
     const size_t M = 10;
 }
 
-SpectralH::SpectralH(const std::vector<double>& u, double R) :
+SpectralHe::SpectralHe(const std::vector<double>& u, double R) :
 Helium(u, R),
 m_basis(M, std::vector<double>(m_N))
 {
@@ -32,7 +32,7 @@ m_basis(M, std::vector<double>(m_N))
     LDA_DFT();
 }
 
-SpectralH::~SpectralH()
+SpectralHe::~SpectralHe()
 {
     gsl_eigen_symmv_free(m_eigenWorkspace);
     gsl_matrix_free(m_H);
@@ -41,7 +41,7 @@ SpectralH::~SpectralH()
     gsl_vector_free(m_eigenColumn);
 }
 
-void SpectralH::constructVarBasis()
+void SpectralHe::constructVarBasis()
 {
     std::cout << "Constructing variational basis." << std::endl;
     for (size_t n = 1; n < M + 1; ++n)
@@ -57,7 +57,7 @@ void SpectralH::constructVarBasis()
     std::cout << std::endl;
 }
 
-void SpectralH::constructHamiltonian()
+void SpectralHe::constructHamiltonian()
 {
     for (size_t j = 0; j < M; ++j)
     {
@@ -78,7 +78,7 @@ void SpectralH::constructHamiltonian()
     }
 }
 
-void SpectralH::updateDensity()
+void SpectralHe::updateDensity()
 {
     constructHamiltonian();
 
