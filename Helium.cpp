@@ -69,9 +69,11 @@ std::vector<double> Helium::correlatic()
 void Helium::LDA_DFT()
 {
     std::cout << "Running LDA DFT." << std::endl;
+    uint32_t count = 0;
     while(true)
     {
-        std::cout << "Now at " << m_e << '\r' << std::flush;
+        ++ count;
+        std::cout << "Iteration no. " << count <<  " | Now at " << m_e << '\r' << std::flush;
 
         //std::vector<double> comparison(m_u);
         double comparison = m_e;
@@ -84,7 +86,11 @@ void Helium::LDA_DFT()
         }
 
         updateDensity();
-        if (std::abs(m_e - comparison) < tolerance) return;
+        if (std::abs(m_e - comparison) < tolerance)
+        {
+            std::cout << "Finished in " << count << " iterations." << std::endl;
+            return;
+        }
     }
 }
 

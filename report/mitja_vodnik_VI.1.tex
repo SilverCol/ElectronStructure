@@ -1,0 +1,94 @@
+\documentclass[a4paper]{article}
+\usepackage[slovene]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+%\usepackage[margin=2cm, bottom=3cm, foot=1.5cm]{geometry}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{dirtytalk}
+
+\newcommand{\tht}{\theta}
+\newcommand{\Tht}{\Theta}
+\newcommand{\dlt}{\delta}
+\newcommand{\eps}{\epsilon}
+\newcommand{\thalf}{\frac{3}{2}}
+\newcommand{\ddx}[1]{\frac{d^2#1}{dx^2}}
+\newcommand{\ddr}[2]{\frac{\partial^2#1}{\partial#2^2}}
+\newcommand{\mddr}[3]{\frac{\partial^2#1}{\partial#2\partial#3}}
+
+\newcommand{\der}[2]{\frac{d#1}{d#2}}
+\newcommand{\pder}[2]{\frac{\partial#1}{\partial#2}}
+\newcommand{\half}{\frac{1}{2}}
+\newcommand{\forth}{\frac{1}{4}}
+\newcommand{\q}{\underline{q}}
+\newcommand{\p}{\underline{p}}
+\newcommand{\x}{\underline{x}}
+\newcommand{\liu}{\hat{\mathcal{L}}}
+\newcommand{\bigO}[1]{\mathcal{O}\left( #1 \right)}
+\newcommand{\pauli}{\mathbf{\sigma}}
+\newcommand{\bra}[1]{\langle#1|}
+\newcommand{\ket}[1]{|#1\rangle}
+\newcommand{\id}[1]{\mathbf{1}_{2^{#1}}}
+\newcommand{\tinv}{\frac{1}{\tau}}
+\newcommand{\s}{\sigma}
+\newcommand{\vs}{\vec{\s}}
+\newcommand{\vr}{\vec{r}}
+\newcommand{\vq}{\vec{q}}
+\newcommand{\vv}{\vec{v}}
+\newcommand{\vo}{\vec{\omega}}
+\newcommand{\uvs}{\underline{\vs}}
+\newcommand{\expected}[1]{\left\langle #1 \right\rangle}
+\newcommand{\D}{\Delta}
+
+\newcommand{\range}[2]{#1, \ldots, #2}
+\newcommand{\seq}[2]{#1 \ldots #2}
+\newcommand{\psiCoef}[2]{\psi_{\range{#1}{#2}}}
+\newcommand{\psiCoeff}[3]{\psi_{#1, \range{#2}{#3}}}
+\newcommand{\mpa}[2]{#1^{(#2)}_{s_#2}}
+\newcommand{\us}{\underline{s}}
+\newcommand{\up}{\uparrow}
+\newcommand{\down}{\downarrow}
+
+\begin{document}
+
+    \title{\sc\large Višje računske metode\\
+		\bigskip
+		\bf\Large Problem elektronske strukture: metode povprečnega polja in DFT}
+	\author{Mitja Vodnik, 28182041}
+            \date{\today}
+	\maketitle
+
+    Kot preprost zgled uporabe DFT metode računamo elektronsko strukturo Helijevega atoma v osnovnem stanju.
+
+    \begin{equation}\label{eq1}
+        H = \sum_{j=1}^{n-1} \vs_j \cdot \vs_{j+1}
+    \end{equation}
+
+    \section{TEBD algoritem}
+
+    \iffalse
+    \begin{figure}
+        \centering
+        \includegraphics[width = \textwidth]{slika1.pdf}
+        \caption{Energije verige preračunane na delec. Najnižja vrednost, do katere pridemo na grafu je $E_0/n \approx -1.767$}
+        \label{slika1}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        \begin{subfigure}{\textwidth}
+            \includegraphics[width = \textwidth]{slika3a.pdf}
+        \end{subfigure}
+        \begin{subfigure}{\textwidth}
+            \includegraphics[width = \textwidth]{slika3b.pdf}
+        \end{subfigure}
+        \caption{Prikaza matrik spinskih korelacij v osnovnem stanju dveh različno dolgih verig.}
+        \label{slika3}
+    \end{figure}
+    \fi
+
+\end{document}
