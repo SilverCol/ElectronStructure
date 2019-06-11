@@ -8,10 +8,10 @@ static const double R = 15;
 static const size_t N = 10000000;
 static const double h = R/N;
 
-void writeBinary(std::vector<double>& data, const std::string& file)
+void writeBinary(const std::vector<double>& data, const std::string& file)
 {
     std::ofstream output(file, std::ios::binary);
-    for (double& x : data)
+    for (double x : data)
     {
         output.write(reinterpret_cast<char*>(&x), sizeof(x));
     }
@@ -32,13 +32,15 @@ int main()
 
     NumerovHe atom(init, R);
 
-    // std::vector<double> pot = atom.electrostatic();
-    // writeBinary(pot, "../data/potential.bin");
-    std::vector<double> psi = atom.psi();
+    std::string pot = "../data/potential";
+    pot.append(std::to_string((int)R));
+    pot.append(".bin");
+    writeBinary(atom.electrostatic(), pot);
+    
     std::string state = "../data/state";
     state.append(std::to_string((int)R));
     state.append(".bin");
-    writeBinary(psi, state);
+    writeBinary(atom.psi(), state);
 
     std::cout << "Results: " << std::endl;
     std::cout << atom.epsilon() << std::endl;

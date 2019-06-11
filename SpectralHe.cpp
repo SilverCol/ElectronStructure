@@ -9,7 +9,7 @@
 namespace
 {
     const size_t M = 10;
-    const double tolerance = 1e-10;
+    const double tolerance = 1e-4;
 }
 
 SpectralHe::SpectralHe(const std::vector<double>& u, double R) :
