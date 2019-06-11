@@ -4,7 +4,7 @@
 #include "SpectralHe.h"
 #include "NumerovHe.h"
 
-static const double R = 15;
+static const double R = 17;
 static const size_t N = 10000000;
 static const double h = R/N;
 

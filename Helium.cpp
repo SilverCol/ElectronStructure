@@ -112,6 +112,6 @@ double Helium::energy()
 std::vector<double> Helium::psi()
 {
     std::vector<double> psi(m_N);
-    std::transform(m_u.begin(), m_u.end(), m_r.begin(), psi.begin(), std::multiplies<>());
+    std::transform(m_u.begin(), m_u.end(), m_r.begin(), psi.begin(), std::divides<>());
     return psi;
 }
