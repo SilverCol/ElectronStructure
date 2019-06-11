@@ -15,7 +15,7 @@ ax.grid()
 ax.set_yscale('log')
 He, = ax.plot(domain, state**2)
 H, = ax.plot(domain, stateH**2)
-ax.legend((He, H), ('$|\\psi_{He}(r)|^2$', '$|\\psi_{H}(r)|^2$'))
+ax.legend((He, H), ('$|\\phi_{He}(r)|^2$', '$|\\phi_{H}(r)|^2$'))
 ax.set_xlabel('$r$')
 
 plt.show()

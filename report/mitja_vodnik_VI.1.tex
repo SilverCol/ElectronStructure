@@ -62,13 +62,32 @@
             \date{\today}
 	\maketitle
 
-    Kot preprost zgled uporabe DFT metode računamo elektronsko strukturo Helijevega atoma v osnovnem stanju.
+    Kot preprost zgled uporabe DFT metode računamo elektronsko strukturo helijevega atoma v osnovnem stanju.
+    Zanima nas torej elektronska gostota $\rho(\vr)$, ki po Hohenberg-Kohnovem izreku enolično določa osnovno
+    stanje mnogodelčnega kvantno-mehanskega sistema.
+    Ker ima helijev atom dva elektrona, je gostoto mogoče izraziti z le eno sferno simetrično orbitalo:
 
     \begin{equation}\label{eq1}
-        H = \sum_{j=1}^{n-1} \vs_j \cdot \vs_{j+1}
+        \rho(\vr) = \rho(r) = 2|\phi(r)|^2
     \end{equation}
 
-    \section{TEBD algoritem}
+    To je orbitala, ki jo uporabimo v Kohn-Shamovem modelu za funkcional elektroske gostote.
+    Tako dobimo DFT metodo, ki je ekvivalentna reševanju naslednjih Hartree-Fockovih enačb za orbitalo:
+
+    \begin{equation}\label{eq2}
+        \left( -\half \nabla^2 + V_{eff}(\vr) \right) \phi(\vr) = \epsilon \phi(\vr)
+    \end{equation}
+
+    \begin{equation}\label{eq3}
+        V_{eff}(\vr) = V(\vr) + \int d^3\vr' \frac{\rho(\vr)}{|\vr - \vr'|} + V_{xc}^{[\rho]}(\vr)
+    \end{equation}
+
+    $V_{xc}^{[\rho]}$ tu predstavlja izmenjalno-korelacijski potencial in ga precej natančno dobimo z aproksimacijo
+    lokalne gostote (LDA).
+
+    \section{Implementacija}
+
+    \ldots
 
     \iffalse
     \begin{figure}
