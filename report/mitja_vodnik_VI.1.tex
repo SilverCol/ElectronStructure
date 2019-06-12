@@ -17,7 +17,7 @@
 \newcommand{\eps}{\epsilon}
 \newcommand{\thalf}{\frac{3}{2}}
 \newcommand{\ddx}[1]{\frac{d^2#1}{dx^2}}
-\newcommand{\ddr}[2]{\frac{\partial^2#1}{\partial#2^2}}
+\newcommand{\ddr}[2]{\frac{d^2#1}{d#2^2}}
 \newcommand{\mddr}[3]{\frac{\partial^2#1}{\partial#2\partial#3}}
 
 \newcommand{\der}[2]{\frac{d#1}{d#2}}
@@ -82,12 +82,71 @@
         V_{eff}(\vr) = V(\vr) + \int d^3\vr' \frac{\rho(\vr)}{|\vr - \vr'|} + V_{xc}^{[\rho]}(\vr)
     \end{equation}
 
-    $V_{xc}^{[\rho]}$ tu predstavlja izmenjalno-korelacijski potencial in ga precej natančno dobimo z aproksimacijo
+    Prvs dva člena v izrazu za potencial~\ref{eq3} predstavljata elektrostatski potencial jedra in elektronov,
+    $V_{xc}^{[\rho]}$ pa predstavlja izmenjalno-korelacijski potencial, ki ga precej natančno dobimo z aproksimacijo
     lokalne gostote (LDA).
 
     \section{Implementacija}
 
-    \ldots
+    Opišimo sedaj algoritem za numerično reševanje zgornjih Hartree-Fockovih enačb.
+    Najprej zapišimo orbitalo kot:
+
+    \begin{equation}\label{eq4}
+        \phi(r) = \frac{u(r)}{r}
+    \end{equation}
+
+    Enačba~\ref{eq2} se tedaj prevede na:
+
+    \begin{equation}\label{eq5}
+        \left( -\half \ddr{}{r} + V_{eff}(r) \right) u(r) = \epsilon u(r), \quad u(0) = u(r_{max}) = 0
+    \end{equation}
+
+    Z $r_{max}$ smo označili valikost območja nakaterem rešujemo enačbe - biti mora dovolj veliko, da valovna funlcija
+    $\phi$ do roba že pade na zanemarljivo vrednost.
+    Efektivni potencial v zgornjem izrazu razpišemo kot:
+
+    \begin{equation}\label{eq6}
+        V_{eff} = -\frac{2}{r} + \frac{2U(r)}{r} + V_{xc}(r)
+    \end{equation}
+
+    Elektrostatski potencial elektronov smo zapisali kot $V_{el}(r) = \frac{2U(r)}{r}$ in ga dobimo iz Poissonove
+    enačbe:
+
+    \begin{equation}\label{eq7}
+        \ddr{U(r)}{r} = - \frac{u^2(r)}{r}, \quad U(0) = 0, \quad U(r_{max}) = 1
+    \end{equation}
+
+    Približek za izmenjalno-korelacijski potencial dobimo po LDA metodi in se izrazi kot:
+
+    \begin{equation}\label{eq8}
+        V_{xc}(r) = - \left( \frac{3}{2\pi^2} \frac{u^2(r)}{r^2} \right)^{\frac{1}{3}}
+    \end{equation}
+
+    Algoritem za reševanje je naslednji:
+
+    \begin{enumerate}
+        \item Začnemo z orbitalo, ki ustreza osnovnemu stanju vodikovega atoma:
+
+        \begin{equation}\label{eq9}
+            u_0(r) = r\phi_0(r) \propto re^{-r}, \quad \int_0^{r_{max}} u_0^2(r)dr = 1
+        \end{equation}
+
+        \item Po enačbi~\ref{eq7} izračunamo elektrostatski potencial, po enačbi~\ref{eq8} pa
+        izmenjalno-korelacijskega, in ju vstavimo v enačbo~\ref{eq6}, da dobimo efektivni potencial.
+
+        \item Dobljeni potencial uporabimo v enačbi~\ref{eq5} da dobimo novo obliko orbitale $u(r)$.
+
+        \item Točki 2 in 3 ponavljamo, dokler postopek ne konvergira.
+
+    \end{enumerate}
+
+    Kot rezultat algoritma dobimo elektronsko gostoto $\rho(r) = \frac{u^2(r)}{r^2}$ in ustrezno lastno energijo $E$,
+    ki predstavlja zgolj zgornjo mejo za pravo energijo osnovnega stanja helija $E_0$.
+    Lstna energija se izraža kot:
+
+    \begin{equation}\label{eq10}
+    E = 2\epsilon - \int_0^{r_{max}} \frac{2U(r)}{r} u^2(r) dr - \half \int_0^{r_{max}} V_{xc}(r) u^2(r) dr
+    \end{equation}
 
     \iffalse
     \begin{figure}
@@ -109,5 +168,11 @@
         \label{slika3}
     \end{figure}
     \fi
+
+    \begin{thebibliography}{9}
+        \bibitem{it1}Quiroz González, J. L. M., and D. Thompson.
+            \say{Getting started with Numerov’s method.}
+            Computers in Physics 11.5 (1997): 514-515.
+    \end{thebibliography}
 
 \end{document}
