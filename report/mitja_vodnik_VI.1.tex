@@ -95,7 +95,7 @@
         \phi(r) = \frac{u(r)}{r}
     \end{equation}
 
-    Enačba~\ref{eq2} se tedaj prevede na:
+    Schr\"odingerjeva enačba~\ref{eq2} se tedaj prevede na:
 
     \begin{equation}\label{eq5}
         \left( -\half \ddr{}{r} + V_{eff}(r) \right) u(r) = \epsilon u(r), \quad u(0) = u(r_{max}) = 0
@@ -147,6 +147,68 @@
     \begin{equation}\label{eq10}
     E = 2\epsilon - \int_0^{r_{max}} \frac{2U(r)}{r} u^2(r) dr - \half \int_0^{r_{max}} V_{xc}(r) u^2(r) dr
     \end{equation}
+
+    \subsection{Reševanje Schr\"odingerjeve enačbe}
+
+    Enačbo~\ref{eq5} rešujemo s kombinacijo strelske metode in metode Numerova.
+    Postopek je naslednji:
+
+    \begin{enumerate}
+        \item Izberemo dve začetni vrednosti parametra $\epsilon$, ki določita interval v katerem iščemo
+        lastno vrednost enačbe.
+        (Izberemo $\epsilon_1 = -1$ in $\epsilon_2 = 0$, ker vemo, da naj bi dobili $\epsilon = -0.52$.)
+        \item Sedaj delamo bisekcijo po tem intervalu: vsakič za vrednost parametra na sredini intervala
+        ($\epsilon = \frac{\epsilon_1 + \epsilon_2}{2}$) naredimo \say{strel} - z metodo Numerova rešimo
+        enačbo~\ref{eq5} in preštejemo, koliko ničel ima dobljena rešitev.
+        Iščemo osnovno stanje, torej rešitev, ki nima nobene ničle, razen na robovih.
+        Če ima rešitev kakšno ničlo, je vrednost parametra previsoka, torej iskanje zožimo na spodnjo polovico intervala,
+        če pa nima nobene ničle, se zožimo na zgornjo.
+        Tako bomo skonvergirali k rešitvi, ki ničlo doseže ravno na robu intervala: $u(r_{max}) = 0$.
+        (Za ničlo na začetku $u(r_{max})$ je poskrbleno v začetnem pogoju metode Numerova, ki je opisana v nadaljevanju.)
+    \end{enumerate}
+
+    Za metodo Numerova enačbo~\ref{eq5} malo preuredimo:
+
+    \begin{equation}\label{eq11}
+        u''(r) + 2\big(\epsilon - V(r)\big)u(r) = 0
+    \end{equation}
+
+    Sedaj prostor diskretiziramo na $N$ intervalov:
+
+    \begin{equation}\label{eq12}
+        h = \frac{r_{max}}{N}, \quad r_n = nh, \quad n = 1, \ldots, N
+    \end{equation}
+
+    \begin{equation}\label{eq13}
+        V_n = V(r_n), \quad u_n = u(r_n)
+    \end{equation}
+
+    Metoda Numerova se tedaj glasi:
+
+    \begin{equation}\label{eq14}
+        u_{n+1} = \frac{(12 - 10f_n)u_n - f_{n-1}u_{n-1}}{f_{n+1}},
+    \end{equation}
+
+    kjer smo označili $f_n = \frac{h^2}{6} (\epsilon - V_n) + 1$.
+    Potrebna sta še pogoja v prvih dveh točkah.
+    Ker je pogoj v prvi kar ničelen, lahko v drugi točki izberemo poljubno vrednost, ki bo na koncu popravljena z
+    normalizacijo.
+    Izberemo torej:
+
+    \begin{equation}\label{eq15}
+        u_1 = 0, \quad u_2 = 1
+    \end{equation}
+
+    \subsection{Reševanje Poissonove enačbe}
+
+    Tudi enačbo~\ref{eq7} rešujemo z metodo Numerova.
+    Razlika pri tej je, da drugega začetnega pogoja ne moremo izbrati poljubno, saj potencial nima dodatne
+    normalizacijske vezi, kot orbitala.
+    Uporabimo postopek opisan v članku~\cite{it1}, ki nam omogoči izračun drugega pogoja brez izgube natančnosti.
+
+    \section{Rezultati}
+
+    \ldots
 
     \iffalse
     \begin{figure}
