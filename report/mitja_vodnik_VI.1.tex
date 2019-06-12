@@ -208,28 +208,54 @@
 
     \section{Rezultati}
 
-    \ldots
+    DFT algoritem sem izvajal, dokler sprememba parametra $\epsilon$ po iteraciji ni padla pod $10^{-4}$.
+    Za to je bilo potrebnih 13 iteracij.
+    Dobljeni rezultat se ujema s predvidenim, če ga zaokrožimo na dve decimalni mesti:
 
-    \iffalse
+    \begin{equation}\label{eq16}
+        \epsilon = - 0.517, \quad E = - 2.724
+    \end{equation}
+
+    Kot rezultat dobimu tudi obliko orbitale in elektrostatski potencial elektronov v He atomu - ta rezultat je prikazan
+    na sliki~\ref{slika1}.
+    Za primerjavo je na sliki~\ref{slika2} dodan tudi analitičen rezltat za vodikov atom.
+    Glavna razlika med obema atomoma je lepo ravidna na sliki~\ref{slika3}, kjer sta prikazani njuni elektronski
+    gostoti - helijeva je nekoliko ožja od vodikove.
+    Kvantitativno lahko to določimo tako, da izračunamo pričakovane vrednosti oddaljenosti od izhodišča:
+
+    \begin{equation}\label{eq17}
+        \expected{r} = \int_0^{r_{max}} r |\phi(r)|^2 r^2 dr
+    \end{equation}
+
+    Izvemo, da je radij helijevega atoma skoraj dvakrat manjši kot radij vodikovega:
+
+    \begin{equation}\label{eq18}
+        \expected{r}_{He} = 0.97, \quad \expected{r}_{H} = 1.5, \quad
+        \frac{\expected{r}_{He}}{\expected{r}_{H}} = 0.65
+    \end{equation}
+
     \begin{figure}
         \centering
         \includegraphics[width = \textwidth]{slika1.pdf}
-        \caption{Energije verige preračunane na delec. Najnižja vrednost, do katere pridemo na grafu je $E_0/n \approx -1.767$}
+        \caption{Orbitala in elektrostatski ter izmenjalno-interakcijski potencial helijevega atoma izračunan po
+        DFT algoritmu.
+        Diskretizacija je bila $N = 10^7$ pri $r_{max} = 15$; opravljenih je bilo 13 iteracij.}
         \label{slika1}
     \end{figure}
 
     \begin{figure}
         \centering
-        \begin{subfigure}{\textwidth}
-            \includegraphics[width = \textwidth]{slika3a.pdf}
-        \end{subfigure}
-        \begin{subfigure}{\textwidth}
-            \includegraphics[width = \textwidth]{slika3b.pdf}
-        \end{subfigure}
-        \caption{Prikaza matrik spinskih korelacij v osnovnem stanju dveh različno dolgih verig.}
+        \includegraphics[width = \textwidth]{slika2.pdf}
+        \caption{Orbitala in elektrostatski potencial vodikovega atoma.}
+        \label{slika2}
+    \end{figure}
+
+    \begin{figure}
+        \centering
+        \includegraphics[width = \textwidth]{slika3.pdf}
+        \caption{Elektronski gostoti He in H atoma v logaritemski skali.}
         \label{slika3}
     \end{figure}
-    \fi
 
     \begin{thebibliography}{9}
         \bibitem{it1}Quiroz González, J. L. M., and D. Thompson.
